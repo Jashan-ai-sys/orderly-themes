@@ -1,121 +1,148 @@
-import { Plus, Minus } from 'lucide-react';
 import { MenuItem } from '@/data/menuData';
-import { useCart } from '@/contexts/CartContext';
+import { restaurantInfo } from '@/data/menuData';
+import { MessageCircle, ShoppingCart, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { useCart } from '@/contexts/CartContext';
+import { useState } from 'react';
 
 interface MenuItemCardProps {
   item: MenuItem;
 }
 
 const MenuItemCard = ({ item }: MenuItemCardProps) => {
-  const { items, addToCart, updateQuantity } = useCart();
-  
-  const cartItemFull = items.find(i => i.id === item.id && i.selectedSize === 'full');
-  const cartItemHalf = items.find(i => i.id === item.id && i.selectedSize === 'half');
+  const [imageError, setImageError] = useState(false);
+  const { addToCart } = useCart();
+
+  const handleWhatsAppOrder = () => {
+    const message = encodeURIComponent(
+      `Hi ${restaurantInfo.name}! I would like to order:\n• ${item.name}${item.halfPrice ? ' (Full)' : ''} – ₹${item.price}`
+    );
+    const whatsappUrl = `https://wa.me/${restaurantInfo.whatsappNumber}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleAddToCart = (size: 'half' | 'full') => {
+    addToCart(item, size);
+  };
 
   return (
-    <Card className="group bg-card border-border hover:border-primary/30 transition-all duration-300 overflow-hidden">
-      <div className="p-4 space-y-3">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className={`w-4 h-4 border-2 rounded-sm flex items-center justify-center flex-shrink-0 ${
-                item.isVeg ? 'border-green-500' : 'border-red-500'
+    <div className="group glass-dark rounded-2xl overflow-hidden hover-lift shadow-luxury-sm hover:shadow-luxury transition-all duration-300">
+      {/* Image Section */}
+      <div className="relative h-48 overflow-hidden bg-muted/20">
+        {!imageError && item.image ? (
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/30 to-muted/10">
+            <span className="text-6xl opacity-50">🍽️</span>
+          </div>
+        )}
+
+        {/* Veg/Non-Veg Badge */}
+        <div className="absolute top-3 left-3">
+          <div className={`glass px-3 py-1.5 rounded-full flex items-center gap-1.5 ${item.isVeg ? 'border-green-500/30' : 'border-red-500/30'
+            }`}>
+            <div className={`w-3 h-3 border-2 rounded-sm flex items-center justify-center ${item.isVeg ? 'border-green-500' : 'border-red-500'
               }`}>
-                <span className={`w-2 h-2 rounded-full ${item.isVeg ? 'bg-green-500' : 'bg-red-500'}`} />
-              </span>
-              <h3 className="font-medium text-foreground truncate">{item.name}</h3>
+              <div className={`w-1.5 h-1.5 rounded-full ${item.isVeg ? 'bg-green-500' : 'bg-red-500'
+                }`} />
             </div>
-            <p className="text-xs text-muted-foreground">{item.cuisine} • {item.category}</p>
+            {item.isVeg && <Leaf className="w-3 h-3 text-green-500" />}
           </div>
         </div>
 
-        {/* Price and Add buttons */}
-        <div className="space-y-2">
-          {/* Full portion */}
-          <div className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2">
-            <div>
-              <span className="text-xs text-muted-foreground">Full</span>
-              <p className="font-semibold text-primary">₹{item.price}</p>
-            </div>
-            {cartItemFull ? (
-              <div className="flex items-center gap-2">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-8 w-8 border-primary/50"
-                  onClick={() => updateQuantity(item.id, 'full', cartItemFull.quantity - 1)}
-                >
-                  <Minus className="w-4 h-4" />
-                </Button>
-                <span className="w-6 text-center font-medium">{cartItemFull.quantity}</span>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-8 w-8 border-primary/50"
-                  onClick={() => updateQuantity(item.id, 'full', cartItemFull.quantity + 1)}
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
+        {/* Cuisine Badge */}
+        <div className="absolute top-3 right-3">
+          <span className="glass px-3 py-1 rounded-full text-xs font-medium capitalize">
+            {item.cuisine}
+          </span>
+        </div>
+
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+
+      {/* Content Section */}
+      <div className="p-5 space-y-4">
+        {/* Title */}
+        <div>
+          <h3 className="text-lg font-serif font-semibold text-foreground mb-1 line-clamp-1">
+            {item.name}
+          </h3>
+          <p className="text-xs text-muted-foreground capitalize">
+            {item.category}
+          </p>
+        </div>
+
+        {/* Description */}
+        {item.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {item.description}
+          </p>
+        )}
+
+        {/* Pricing & Actions */}
+        <div className="space-y-3 pt-2 border-t border-white/5">
+          {/* Price Display */}
+          <div className="flex items-center justify-between">
+            {item.halfPrice ? (
+              <div className="flex items-center gap-3">
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground">Half</p>
+                  <p className="text-lg font-bold text-gold-gradient bg-clip-text">₹{item.halfPrice}</p>
+                </div>
+                <div className="w-px h-8 bg-white/10" />
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground">Full</p>
+                  <p className="text-lg font-bold text-gold-gradient bg-clip-text">₹{item.price}</p>
+                </div>
               </div>
             ) : (
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                onClick={() => addToCart(item, 'full')}
-              >
-                <Plus className="w-4 h-4 mr-1" />
-                Add
-              </Button>
+              <div>
+                <p className="text-2xl font-bold text-gold-gradient bg-clip-text">
+                  ₹{item.price}
+                </p>
+              </div>
             )}
           </div>
 
-          {/* Half portion (if available) */}
-          {item.halfPrice && (
-            <div className="flex items-center justify-between bg-muted/30 rounded-lg px-3 py-2">
-              <div>
-                <span className="text-xs text-muted-foreground">Half</span>
-                <p className="font-semibold text-primary">₹{item.halfPrice}</p>
-              </div>
-              {cartItemHalf ? (
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-8 w-8 border-primary/50"
-                    onClick={() => updateQuantity(item.id, 'half', cartItemHalf.quantity - 1)}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <span className="w-6 text-center font-medium">{cartItemHalf.quantity}</span>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-8 w-8 border-primary/50"
-                    onClick={() => updateQuantity(item.id, 'half', cartItemHalf.quantity + 1)}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-muted-foreground hover:text-primary hover:bg-primary/10"
-                  onClick={() => addToCart(item, 'half')}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add
-                </Button>
-              )}
+          {/* Action Buttons */}
+          {item.halfPrice ? (
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                size="sm"
+                onClick={() => handleAddToCart('half')}
+                className="glass border border-primary/30 hover:bg-primary/10 text-white font-medium rounded-lg transition-all duration-300"
+              >
+                <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                Half
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => handleAddToCart('full')}
+                className="glass border border-primary/30 hover:bg-primary/10 text-white font-medium rounded-lg transition-all duration-300"
+              >
+                <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                Full
+              </Button>
             </div>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => handleAddToCart('full')}
+              className="w-full glass border border-primary/30 hover:bg-primary/10 text-white font-medium py-2.5 rounded-lg transition-all duration-300"
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Add to Cart
+            </Button>
           )}
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

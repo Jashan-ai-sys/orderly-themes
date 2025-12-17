@@ -16,7 +16,7 @@ const MenuSection = () => {
 
   const filteredItems = useMemo(() => {
     let items: MenuItem[] = [];
-    
+
     // Get items based on category
     if (activeCategory === 'all') {
       items = menuCategories.flatMap(cat => cat.items);
@@ -28,7 +28,7 @@ const MenuSection = () => {
     // Apply search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      items = items.filter(item => 
+      items = items.filter(item =>
         item.name.toLowerCase().includes(searchLower) ||
         item.category.toLowerCase().includes(searchLower)
       );
@@ -81,7 +81,7 @@ const MenuSection = () => {
     if (activeCategory !== 'all') {
       return [{ id: activeCategory, name: menuCategories.find(c => c.id === activeCategory)?.name || '', items: filteredItems }];
     }
-    
+
     const groups: { id: string; name: string; items: MenuItem[] }[] = [];
     menuCategories.forEach(category => {
       const categoryItems = filteredItems.filter(item => item.category === category.name);
@@ -93,10 +93,10 @@ const MenuSection = () => {
   }, [activeCategory, filteredItems]);
 
   return (
-    <section className="min-h-screen">
+    <section id="menu-section" className="min-h-screen py-12 bg-background">
       <MenuFilters filters={filters} onFiltersChange={setFilters} />
       <CategoryNav activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
-      
+
       <div className="container mx-auto px-4 py-8">
         {filteredItems.length === 0 ? (
           <div className="text-center py-16">
