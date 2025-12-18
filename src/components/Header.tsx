@@ -31,30 +31,6 @@ const Header = () => {
         }`}
     >
       <div className="container mx-auto px-4">
-        {/* Top Info Bar - Desktop Only */}
-        <div className="hidden lg:flex items-center justify-between py-2 text-xs border-b border-white/5">
-          <div className="flex items-center gap-6 text-muted-foreground">
-            <a
-              href={`tel:${restaurantInfo.phone1}`}
-              className="flex items-center gap-2 hover:text-primary transition-colors"
-            >
-              <Phone className="w-3 h-3" />
-              {restaurantInfo.phone1}
-            </a>
-            <a
-              href={`tel:${restaurantInfo.phone2}`}
-              className="flex items-center gap-2 hover:text-primary transition-colors"
-            >
-              <Phone className="w-3 h-3" />
-              {restaurantInfo.phone2}
-            </a>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="w-3 h-3" />
-            <span className="max-w-md truncate">{restaurantInfo.address}</span>
-          </div>
-        </div>
-
         {/* Main Navigation */}
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
