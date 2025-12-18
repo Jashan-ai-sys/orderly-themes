@@ -3,7 +3,7 @@ import Hero from "@/components/Hero";
 import MenuSection from "@/components/MenuSection";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+
 import { CartProvider } from "@/contexts/CartContext";
 
 const Index = () => {
@@ -17,7 +17,6 @@ const Index = () => {
         </main>
         <Footer />
         <CartDrawer />
-        <FloatingWhatsApp />
       </div>
     </CartProvider>
   );
