@@ -91,9 +91,9 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* CTA Button */}
+        {/* CTA Buttons */}
         <div 
-          className="opacity-0 animate-fade-up"
+          className="flex flex-col items-center gap-4 opacity-0 animate-fade-up"
           style={{ animationDelay: '0.6s', animationFillMode: 'both' }}
         >
           <Button
@@ -104,6 +104,13 @@ const Hero = () => {
             <MessageCircle className="w-5 h-5 md:w-6 md:h-6 mr-3 group-hover:animate-pulse" />
             Order on WhatsApp
           </Button>
+          
+          <button
+            onClick={() => document.querySelector('#menu-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="text-white/70 hover:text-gold transition-colors text-sm tracking-wide underline underline-offset-4"
+          >
+            View Menu
+          </button>
         </div>
       </div>
 
